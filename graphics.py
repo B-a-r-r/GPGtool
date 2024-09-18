@@ -3,8 +3,8 @@ import customtkinter as ctk
 
 class Graphics:
     
-    MODES = ["Encryption", "Decryption"]
-    ERRORS = [0,1]
+    (MODES) = ("Encryption", "Decryption")
+    (ERRORS) = (0,1)
     
     _window: Tk
     selected_mode: str = None
@@ -21,8 +21,8 @@ class Graphics:
     submit_button: ctk.CTkButton
     result_label: ctk.CTkTextbox
         
-    def mainloop(self)->None:
-        self._window.mainloop()
+    def mainloop(self, n=0)->None:
+        self._window.mainloop(n=n)
 
     def init_window(self)->None:
         self._window = Tk()
@@ -47,81 +47,119 @@ class Graphics:
                                         text="Simple GPG Encryption/Decryption App", 
                                         font=("Inter", 22)
         )
-        self.title_label.grid(columnspan=self.main_frame.grid_size()[0], row=0, pady=35)
+        self.title_label.grid(columnspan=self.main_frame.grid_size()[0], row=0, pady=20)
         
         self.mode_menu = ctk.CTkOptionMenu(master=self.main_frame,
                                            variable=StringVar(value="Select mode"), 
                                            values=self.MODES,
                                            dynamic_resizing=True,
-                                           command=self.refresh_layout
+                                           command=self.mode_menu_clicked
         )
-        self.mode_menu.grid(columnspan=self.main_frame.grid_size()[0], row=1, pady=10)
-
-        self.text_label = ctk.CTkLabel(master=self.main_frame, text="Text:")
+        self.mode_menu.grid(columnspan=self.main_frame.grid_size()[0], row=1, pady=20)
         
-        self.text_entry = ctk.CTkTextbox(master=self.main_frame, width=400, height=300)
+        self.text_entry = ctk.CTkTextbox(master=self.main_frame, width=400, height=300, cursor="xterm", text_color="grey")
+        self.text_entry.insert("1.0", "Your text...")
 
-        self.email_label = ctk.CTkLabel(master=self.main_frame, text="Email:")
-        self.email_entry = ctk.CTkEntry(master=self.main_frame, width=300)
-
-        self.key_label = ctk.CTkLabel(master=self.main_frame, text="Key:")
+        self.passphrase_entry = ctk.CTkEntry(master=self.main_frame, width=350, placeholder_text="Passphrase...")
         
-        self.key_entry = ctk.CTkEntry(master=self.main_frame, width=300)
+        self.key_entry = ctk.CTkEntry(master=self.main_frame, width=350, placeholder_text="Key...")
         
-        self.submit_button = ctk.CTkButton(master=self.main_frame, text="Submit", command=self.handle_submit)
+        self.submit_button = ctk.CTkButton(master=self.main_frame, 
+                                           text="Submit", 
+                                           command=self.handle_submit, 
+                                           state="disabled",
+                                           fg_color="grey"
+        )
 
-        self.result_label = ctk.CTkTextbox(master=self.main_frame, width=400, height=300, state="disabled")
+        self.result_label = ctk.CTkTextbox(master=self.main_frame, 
+                                           width=400, 
+                                           height=300, 
+                                           state="disabled"
+        )
+        
+        (self.refreshing_triggers) = {self.text_entry : [self.text_entry.bind("<Button>", self.text_entry_clicked),
+                                                         self.text_entry.bind("<Key>", self.text_entry_clicked)],
+                                      self.key_entry : [self.key_entry.bind("<Key>", self.key_entry_modified)]
+        }
+        
+        (self.PERSISTENT_WIDGETS) = (self.main_frame, self.title_label, self.mode_menu)
         
         self.mainloop()
         self.handle_error(0)
     
     def refresh_layout(self, event=None)->None:
-        if (self.mode_menu.get() not in [self.selected_mode, self.mode_menu._variable]):
-            self.switch_mode(self.mode_menu.get())
-        
-        if (self.text_entry. != "" and self.key_entry.get(0) != ""):
-            self.submit_button.configure(state="normal")
             
-        assert StringVar(value=self.selected_mode).get() in self.MODES, self.handle_error(1)
+        assert self.selected_mode in [*self.MODES, None] , self.handle_error(1)
 
         match self.selected_mode:
-            case "Encryption":
-                self.text_label.configure(text="The text to encrypt :")
-                self.text_label.grid(column=0, row=1, sticky="e", pady=0)
-                self.text_entry.grid(column=1, row=2, pady=5)
-                
-                self.key_label.configure(text="The public key :")
-                self.key_label.grid(column=0, row=3, sticky="e", pady=5)
-                self.key_entry.grid(column=1, row=3, pady=5)
-                
-                self.submit_button.configure(state="normal")
-
-            case "Decryption":
-                self.text_label.configure(text="The text to decrypt :")
-                self.text_label.grid(column=0, row=2, sticky="e", pady=5)
-                self.text_entry.grid(column=1, row=2, pady=5)
-                
-                self.key_label.configure(text="The private key :")
-                self.key_label.grid(column=0, row=4, sticky="e", pady=5)
-                self.key_entry.grid(column=1, row=4, pady=5)
-                
-                self.submit_button.configure(state="normal")
             
-            case "":
-                self.email_label.grid_forget()
-                self.email_entry.grid_forget()
-                self.text_entry.grid_forget()
-                self.key_entry.grid_forget()
-                self.text_label.grid_forget()
-                self.key_label.grid_forget()
-                self.submit_button.configure(state="disabled")
+            case "Encryption":
+                if (not event == "text_entry_clicked"):
+                    self.text_entry_placeholder(mode="encrypt")
+                self.text_entry.grid(column=0, columnspan=self.main_frame.grid_size()[0], row=2, pady=5, ipady=20)
+                
+                self.key_entry.configure(placeholder_text="Public key...")
+                self.key_entry.grid(column=0, columnspan=self.main_frame.grid_size()[0], row=3, pady=5)
+                
+                self.submit_button.grid(column=0, columnspan=self.main_frame.grid_size()[0], row=4, pady=20)
+                
+                self.result_label.grid(columnspan=self.main_frame.grid_size()[0], row=5, pady=10)
+
+            case "Decryption":                
+                if (not event == "text_entry_clicked"):
+                    self.text_entry_placeholder(mode="decrypt")
+                self.text_entry.grid(column=0, columnspan=self.main_frame.grid_size()[0], row=2, pady=5, ipady=20)
+                
+                self.key_entry.configure(placeholder_text="Prvate key...")
+                self.key_entry.grid(column=0, columnspan=self.main_frame.grid_size()[0], row=3, pady=5)
+                
+                self.passphrase_entry.grid(column=0, columnspan=self.main_frame.grid_size()[0], row=4, pady=5)
+                
+                self.submit_button.grid(column=0, columnspan=self.main_frame.grid_size()[0], row=5, pady=20)
+                
+                self.result_label.grid(columnspan=self.main_frame.grid_size()[0], row=6, pady=10)
+    
+    def dispose_all(self)->None:
+        for widget in self.main_frame.winfo_children():
+            if widget not in self.PERSISTENT_WIDGETS:
+                widget.grid_forget()
+            
+        """
+        self.email_label.grid_forget()
+        self.email_entry.grid_forget()
+        self.text_entry.grid_forget()
+        self.key_entry.grid_forget()
+        self.text_label.grid_forget()
+        self.key_label.grid_forget()
+        self.submit_button.configure(state="disabled")
+        self.submit_button.grid_forget()
+        """
         
     def switch_mode(self, new_mode:str)->None:
         self.selected_mode = new_mode
-        self.result_label.grid_forget()
+        self.dispose_all()
+        self.refresh_layout()
 
     def handle_submit(self, event=None)->None:
-        self.result_label.grid(column=0, row=5, columnspan=2, pady=10)
+        pass
+        
+    def text_entry_clicked(self, event=None)->None:
+        self.text_entry.delete("1.0", "end")
+        self.text_entry._text_color = "white"
+        self.refresh_layout(event="text_entry_clicked")
+    
+    def key_entry_modified(self, event=None)->None:
+        self.submit_button.configure(state="normal", fg_color="#1F6AA5")
+        
+    def mode_menu_clicked(self, event=None)->None:
+        if (self.mode_menu.get() not in [self.selected_mode, 'Select mode']):
+            self.switch_mode(self.mode_menu.get())
+    
+    def text_entry_placeholder(self, mode:str)->None:
+        if (self.text_entry.get("1.0", "end") in ["Your text...\n", "\n", "Text to " + mode + "encrypt...\n"]):
+            self.text_entry.delete("1.0", "end")
+            self.text_entry.insert("1.0", "Text to " + mode + "...")
+            self.text_entry._text_color = "grey"
     
     def handle_error(self, error:int)->None:
         assert error in self.ERRORS, SystemError("[GPGtool] Crash report : unknown error '"+str(error)+"' reported.")
