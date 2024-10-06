@@ -10,10 +10,10 @@ class App:
     user_inputs: Key_inputs
     
     def __init__(self, ui_mode:str="GUI")->None:
-        self.ui_mode = ui_mode
+        self.ui_mode = ui_mode.title()
         assert ui_mode in self.UI_MODES, self.handle_error(1)
         
-        if (ui_mode == "GUI"):
+        if (ui_mode.title() == "GUI"):
             self.graphics = Graphics()
             self.graphics.submit_button.configure(command=self.handle_submit)
             self.graphics.init_window()
