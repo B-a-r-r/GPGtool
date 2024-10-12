@@ -2,14 +2,41 @@ from tkinter import Tk, StringVar
 import customtkinter as ctk
 from os import path
 
-class Graphics:
+class Index:
+    
+    _window: Tk
+    appearence_mode: StringVar
+    color_theme: StringVar
+    
+    def __init__(self)->None:
+        """
+        Initialize the main window of the app.
+        """
+        self._window = Tk()
+        
+        self.appearence_mode = StringVar(value="dark")
+        self.color_theme = StringVar(value="blue")
+    
+    def init_window(self)->None:
+        """
+        Configures the window, color theme, and set the grid configuration on the main frame. Then displays the non variable components.
+        """
+        self._window.minsize(600, 600)
+        self._window.maxsize(600, self._window.winfo_screenheight())
+        self._window.title("GPG tool")
+        self._window.configure(bg="#2B2B2B")
+        
+        ctk.set_appearance_mode(self.appearence_mode.get())
+        ctk.set_default_color_theme(self.color_theme.get())
+        
+        self._window.mainloop()
+    
+    
+class Basic_tool_configuration(ctk.CTkFrame):
     
     (MODES) = ("Encryption", "Decryption")
     
-    _window: Tk
     selected_mode: str = None
-    appearence_mode: StringVar
-    color_theme: StringVar
     title_label: ctk.CTkLabel
     mode_menu: ctk.CTkOptionMenu
     text_label: ctk.CTkLabel
@@ -21,17 +48,14 @@ class Graphics:
     submit_button: ctk.CTkButton
     result_label: ctk.CTkTextbox
     
-    def __init__(self)->None:
+    def __init__(self, **kwargs)->None:
         """
-        Initialize and store all the graphics components and the bind events.
+        Initialize and store all the graphics components for the simple encryption/decryption
+        tool, and the bind events.
         """
+        super().__init__(**kwargs)
         
-        self._window = Tk()
-        
-        self.appearence_mode = StringVar(value="dark")
-        self.color_theme = StringVar(value="blue")
-        
-        self.main_frame = ctk.CTkScrollableFrame(master=self._window)
+        self.main_frame = ctk.CTkScrollableFrame(master=super())
         
         self.title_label = ctk.CTkLabel(master=self.main_frame, 
                                         text="Simple GPG Encryption/Decryption App", 
@@ -77,19 +101,10 @@ class Graphics:
         (self.PERSISTENT_WIDGETS) = (self.main_frame, self.title_label, self.mode_menu)
     
         
-    def init_window(self)->None:
+    def display_configuration(self)->None:
         """
         Configures the window, color theme, and set the grid configuration on the main frame. Then displays the non variable components.
         """
-        
-        self._window.minsize(600, 600)
-        self._window.maxsize(600, self._window.winfo_screenheight())
-        self._window.title("GPG tool")
-        self._window.configure(bg="#2B2B2B")
-        
-        ctk.set_appearance_mode(self.appearence_mode.get())
-        ctk.set_default_color_theme(self.color_theme.get())
-        
         self.main_frame.pack(fill="both", expand=True)
         self.main_frame.grid_columnconfigure((0, 2), weight=1)
         self.main_frame.grid_rowconfigure((0, 10), weight=1)
@@ -99,8 +114,6 @@ class Graphics:
         self.mode_menu.grid(columnspan=self.main_frame.grid_size()[0], row=1, pady=20)
         
         self.text_entry.insert("1.0", "Your text...")
-        
-        self._window.mainloop()
     
     def refresh_layout(self, event=None)->None:
         """
@@ -219,8 +232,9 @@ class Graphics:
                 SystemExit("[GPGtool] Crash report : unknown error reported; in graphics.py.")
         self._window.quit()
 
-
+    
+    
 if __name__ == "__main__":
-    test = Graphics()
+    test = Index()
     test.init_window()
             
