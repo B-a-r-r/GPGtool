@@ -2,110 +2,14 @@ from tkinter import Tk, StringVar
 import customtkinter as ctk
 from os import path
 
-class Index:
-    
-    _window: Tk
-    appearence_mode: StringVar
-    color_theme: StringVar
-    main_frame: ctk.CTkScrollableFrame
-    
-    def __init__(self)->None:
-        """
-        Initialize the main window of the app.
-        """
-        self._window = Tk()
-        
-        self.appearence_mode = StringVar(value="dark")
-        self.color_theme = StringVar(value="blue")
-        
-        self.main_frame = ctk.CTkScrollableFrame(master=self._window)
-        
-        self.title_label = ctk.CTkLabel(master=self.main_frame, 
-                                        text="GPG tool", 
-                                        font=("Inter", 22)
-        )
-    
-    def init_window(self)->None:
-        """
-        Configures the window, color theme, and set the grid configuration on the main frame. Then displays the non variable components.
-        """
-        self._window.minsize(600, 600)
-        self._window.maxsize(self._window.winfo_screenwidth(), self._window.winfo_screenheight())
-        self._window.title("GPG tool")
-        self._window.configure(bg="#2B2B2B")
-        
-        ctk.set_appearance_mode(self.appearence_mode.get())
-        ctk.set_default_color_theme(self.color_theme.get())
-        
-        self.main_frame.pack(fill="both", expand=True)
-        self.side_menu = Side_menu(master=self.main_frame)
-        self.side_menu.display_configuration()
-        
-        
-        self._window.mainloop()
-
-class Side_menu(ctk.CTkFrame):
-    
-    def __init__(self, **kwargs)->None:
-        """
-        Initialize and store all the graphics components for the side menu, and the bind events.
-        """
-        super().__init__(**kwargs)
-        
-        self.main_frame = ctk.CTkScrollableFrame(master=kwargs["master"])
-        
-        self.title_label = ctk.CTkLabel(master=self.main_frame, 
-                                        text="Menu", 
-                                        font=("Inter", 22)
-        )
-        
-        self.appearence_mode_label = ctk.CTkLabel(master=self.main_frame, 
-                                                 text="Appearence mode", 
-                                                 font=("Inter", 12)
-        )
-        
-        self.appearence_mode_menu = ctk.CTkOptionMenu(master=self.main_frame, 
-                                                     variable=StringVar(value="dark"), 
-                                                     values=["dark", "light"]
-        )
-        
-        self.color_theme_label = ctk.CTkLabel(master=self.main_frame, 
-                                             text="Color theme", 
-                                             font=("Inter", 12)
-        )
-        
-        self.color_theme_menu = ctk.CTkOptionMenu(master=self.main_frame, 
-                                                 variable=StringVar(value="blue"), 
-                                                 values=["blue", "red", "green", "purple", "orange"]
-        )
-        
-        self.submit_button = ctk.CTkButton(master=self.main_frame, 
-                                           text="Submit",
-        )
-        
-    def submit_button_clicked(self)->None:
-        """
-        If the user click on the submit button, save the new configuration.
-        """
-        
-        self.display_configuration()
-    
-    def display_configuration(self)->None:
-        """
-        Configures the window, color theme, and set the grid configuration on the main frame. Then displays the non variable components.
-        """
-        self.main_frame.pack(fill="both", expand=True)
-        self.main_frame.grid_columnconfigure((0, 2), weight=1)
-        self.main_frame.grid_rowconfigure((0, 10), weight=1)
-        
-        self.title_label.grid(columnspan=self.main_frame.grid_size()[0], row=0, pady=20)
-        self.appearence_mode_label.grid(column=0, row=1, pady=10)
-
-class Basic_tool_configuration(ctk.CTkFrame):
+class Graphics:
     
     (MODES) = ("Encryption", "Decryption")
     
+    _window: Tk
     selected_mode: str = None
+    appearence_mode: StringVar
+    color_theme: StringVar
     title_label: ctk.CTkLabel
     mode_menu: ctk.CTkOptionMenu
     text_label: ctk.CTkLabel
@@ -117,14 +21,17 @@ class Basic_tool_configuration(ctk.CTkFrame):
     submit_button: ctk.CTkButton
     result_label: ctk.CTkTextbox
     
-    def __init__(self, **kwargs)->None:
+    def __init__(self)->None:
         """
-        Initialize and store all the graphics components for the simple encryption/decryption
-        tool, and the bind events.
+        Initialize and store all the graphics components and the bind events.
         """
-        super().__init__(**kwargs)
         
-        self.main_frame = ctk.CTkScrollableFrame(master=super())
+        self._window = Tk()
+        
+        self.appearence_mode = StringVar(value="dark")
+        self.color_theme = StringVar(value="green")
+        
+        self.main_frame = ctk.CTkScrollableFrame(master=self._window)
         
         self.title_label = ctk.CTkLabel(master=self.main_frame, 
                                         text="Simple GPG Encryption/Decryption App", 
@@ -170,10 +77,19 @@ class Basic_tool_configuration(ctk.CTkFrame):
         (self.PERSISTENT_WIDGETS) = (self.main_frame, self.title_label, self.mode_menu)
     
         
-    def display_configuration(self)->None:
+    def init_window(self)->None:
         """
         Configures the window, color theme, and set the grid configuration on the main frame. Then displays the non variable components.
         """
+        
+        self._window.minsize(600, 600)
+        self._window.maxsize(600, self._window.winfo_screenheight())
+        self._window.title("GPG tool")
+        self._window.configure(bg="#2B2B2B")
+        
+        ctk.set_appearance_mode(self.appearence_mode.get())
+        ctk.set_default_color_theme(self.color_theme.get())
+        
         self.main_frame.pack(fill="both", expand=True)
         self.main_frame.grid_columnconfigure((0, 2), weight=1)
         self.main_frame.grid_rowconfigure((0, 10), weight=1)
@@ -183,6 +99,8 @@ class Basic_tool_configuration(ctk.CTkFrame):
         self.mode_menu.grid(columnspan=self.main_frame.grid_size()[0], row=1, pady=20)
         
         self.text_entry.insert("1.0", "Your text...")
+        
+        self._window.mainloop()
     
     def refresh_layout(self, event=None)->None:
         """
@@ -301,9 +219,8 @@ class Basic_tool_configuration(ctk.CTkFrame):
                 SystemExit("[GPGtool] Crash report : unknown error reported; in graphics.py.")
         self._window.quit()
 
-    
-    
+
 if __name__ == "__main__":
-    test = Index()
+    test = Graphics()
     test.init_window()
             
