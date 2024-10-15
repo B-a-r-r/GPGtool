@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from custom_widgets.side_pannel import Side_pannel
-from custom_widgets.enc_dec_config import Enc_dec_configuration
+from custom_widgets.using_engine import Using_engine
+from custom_widgets.home_view import Home_view
 
 class Index:
     
@@ -22,7 +23,7 @@ class Index:
         
         self.side_menu = Side_pannel(master=self.main_frame)
         
-        self.active_config = Enc_dec_configuration(master=self.main_frame)
+        self.active_config = Home_view(master=self.main_frame)
     
     def init_window(self)->None:
         """

@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-class Enc_dec_configuration(ctk.CTkFrame):
+class Using_engine(ctk.CTkFrame):
     
     (MODES) = ("Encryption", "Decryption")
     

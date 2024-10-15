@@ -21,7 +21,7 @@ class Side_pannel(ctk.CTkFrame):
         self.main_frame = ctk.CTkFrame(master=self.master)
         
         self.title_label = ctk.CTkLabel(master=self.main_frame, 
-                                        text="Welcome\naboard !", 
+                                        text="Welcome aboard !", 
                                         font=("Inter", 22, "bold")
         )
         self.mode_menu = ctk.CTkOptionMenu(master=self.main_frame,
@@ -31,20 +31,24 @@ class Side_pannel(ctk.CTkFrame):
                                                    "Key management"],
                                            dynamic_resizing=True
         )
-        self.color_theme_menu = ctk.CTkOptionMenu(master=self.main_frame,
+        
+        self.bottom_frame = ctk.CTkFrame(master=self.main_frame,
+                                         bg_color=self.main_frame.cget("bg_color"),
+                                         border_color="white",
+                                        border_width=2
+        )
+        self.color_theme_menu = ctk.CTkComboBox(master=self.bottom_frame,
                                                  values=["System", 
                                                         "Light", 
                                                         "Dark"],
-                                                 dynamic_resizing=True
         )
-        self.scale_menu = ctk.CTkOptionMenu(master=self.main_frame,
+        self.scale_menu = ctk.CTkComboBox(master=self.bottom_frame,
                                            values=["100%", 
                                                    "200%", 
                                                    "80%",
-                                                   "50%"],
-                                           dynamic_resizing=False
+                                                   "50%"]
         )
-        self.copyright_label = ctk.CTkLabel(master=self.main_frame,
+        self.copyright_label = ctk.CTkLabel(master=self.bottom_frame,
                                            text="© 2024, GPGtool",
                                            font=("Inter", 10)
         )
@@ -54,7 +58,7 @@ class Side_pannel(ctk.CTkFrame):
         Display the configuration of the side menu.
         """
         self.main_frame.grid_columnconfigure(0, weight=0)
-        self.main_frame.grid_rowconfigure(5, weight=0)
+        self.main_frame.grid_rowconfigure(3, weight=0)
         
         self.main_frame.grid(column=0, 
                              row=0, 
@@ -64,12 +68,38 @@ class Side_pannel(ctk.CTkFrame):
                              pady=5,
                              sticky="nsew"
         )
-        self.title_label.grid(column=0, row=0, pady=50, padx=5)
-        self.mode_menu.grid(column=0, row=3, pady=20)
-        self.color_theme_menu.grid(column=0, row=6, pady=20)
-        self.scale_menu.grid(column=0, row=7, pady=20)
-        self.copyright_label.grid(column=0, row=8, pady=20)
+        self.title_label.grid(column=0, 
+                              row=0, 
+                              pady=25, 
+                              padx=25,
+        )
+        self.mode_menu.grid(column=0, 
+                            row=1,
+                            pady=20
+        )
         
+        self.bottom_frame.grid_columnconfigure(0, weight=1)
+        self.bottom_frame.grid_rowconfigure(2, weight=1)
+        self.bottom_frame.grid(column=0, 
+                               row=self.main_frame.grid_size()[1], 
+                               columnspan=1,
+                               rowspan=self.main_frame.grid_size()[1],
+                               pady=20,
+                               sticky="nsew"
+        )
+        self.color_theme_menu.grid(column=0, 
+                                   row=0, 
+                                   pady=20
+        )
+        self.scale_menu.grid(column=0, 
+                             row=1, 
+                             pady=20
+        )
+        self.copyright_label.grid(column=0, 
+                                  row=2,  
+                                  pady=20
+        )
+
         self.refreshing_triggers = {self.mode_menu : [self.mode_menu.bind("<Button>", self.mode_menu_clicked)],
                                     self.color_theme_menu : [self.color_theme_menu.bind("<Button>", self.color_theme_menu_clicked)],
                                     self.scale_menu : [self.scale_menu.bind("<Button>", self.scale_menu_clicked)]
