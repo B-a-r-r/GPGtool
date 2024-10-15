@@ -1,5 +1,5 @@
-from graphics import Graphics
-from gpg import GPG_engine, Key_inputs
+from GPGtool.src.graphics.graphics import Graphics
+from GPGtool.src.crypto_engine.gpg import GPG_engine, Key_inputs
 
 class App:
     
