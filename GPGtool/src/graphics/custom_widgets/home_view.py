@@ -36,3 +36,6 @@ class Home_view(ctk.CTkFrame):
         
         self.title_label.pack(anchor="center")
         self.text_label.pack(anchor="center")
+    
+    def dispose_all(self)->None:
+        self.main_frame.destroy()

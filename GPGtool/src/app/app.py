@@ -1,4 +1,4 @@
-from GPGtool.src.graphics.graphics import Graphics
+from GPGtool.src.graphics.index import Graphics
 from GPGtool.src.crypto_engine.gpg import GPG_engine, Key_inputs
 
 class App:
