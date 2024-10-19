@@ -9,20 +9,20 @@ class Index:
     (MODES) = ("Encryption/Decryption", "Key manager")
     
     _window: ctk.CTk
-    appearence_mode: ctk.StringVar
-    color_theme: ctk.StringVar
+    _appearence_mode: ctk.StringVar
+    _color_theme: ctk.StringVar
     
     main_frame: ctk.CTkFrame
-    title_label: ctk.CTkLabel
-    active_config: ctk.CTkFrame
+    _active_config: ctk.CTkFrame
     
-    side_pannel_frame: ctk.CTkFrame
-    mode_menu: ctk.CTkOptionMenu
-    bottom_frame: ctk.CTkFrame
-    color_theme_menu: ctk.CTkOptionMenu
-    scale_menu: ctk.CTkOptionMenu
-    copyright_label: ctk.CTkLabel
-    side_pannel_triggers: dict
+    _side_pannel_frame: ctk.CTkFrame
+    _side_pannel_title_label: ctk.CTkLabel
+    _side_pannel_mode_menu: ctk.CTkOptionMenu
+    _side_pannel_bottom_frame: ctk.CTkFrame
+    _side_pannel_appearance_menu: ctk.CTkOptionMenu
+    _side_pannel_scale_menu: ctk.CTkOptionMenu
+    _side_pannel_copyright_label: ctk.CTkLabel
+    _side_pannel_triggers: dict
     
     def __init__(self)->None:
         """
@@ -30,32 +30,31 @@ class Index:
         """
         self._window = ctk.CTk()
         
-        self.appearence_mode = ctk.StringVar(value="dark")
-        self.color_theme = ctk.StringVar(value="blue")
+        self._appearence_mode = ctk.StringVar(value="dark")
+        self._color_theme = ctk.StringVar(value="blue")
         
         self.main_frame = ctk.CTkFrame(master=self._window)
         
-        self.active_config = Home_view(master=self.main_frame)
+        self._active_config = Home_view(master=self.main_frame)
         
-        self.side_pannel_frame = ctk.CTkFrame(master=self.main_frame)
+        self._side_pannel_frame = ctk.CTkFrame(master=self.main_frame)
         
-        self.side_pannel_title_label = ctk.CTkLabel(master=self.side_pannel_frame, 
-                                        text="Welcome aboard !", 
-                                        font=("Inter", 22, "bold")
+        self._side_pannel_title_label = ctk.CTkLabel(master=self._side_pannel_frame, 
+                                            text="Welcome aboard !", 
+                                            font=("Inter", 22, "bold")
         )
-        self.side_pannel_mode_menu = ctk.CTkOptionMenu(master=self.side_pannel_frame,
-                                           variable=ctk.StringVar(value="Select mode"),
-                                           values=self.MODES,
-                                           dynamic_resizing=True,
-                                           command=self.switch_mode
+        self.side_pannel_mode_menu = ctk.CTkOptionMenu(master=self._side_pannel_frame,
+                                        variable=ctk.StringVar(value="Select mode"),
+                                        values=self.MODES,
+                                        dynamic_resizing=True,
+                                        command=self.switch_mode
         )
         
-        self.side_pannel_bottom_frame = ctk.CTkFrame(master=self.side_pannel_frame,
-                                         bg_color=self.main_frame.cget("bg_color"),
-                                         border_color="white",
-                                        border_width=2
+        self._side_pannel_bottom_frame = ctk.CTkFrame(master=self._side_pannel_frame,
+                                            bg_color=self.main_frame.cget("bg_color")
         )
-        self.appearence_menu = ctk.CTkComboBox(master=self.side_pannel_bottom_frame,
+        self._side_pannel_appearance_menu = ctk.CTkComboBox(
+                                                master=self._side_pannel_bottom_frame,
                                                 values=["System", 
                                                         "Light", 
                                                         "Dark"],
@@ -63,18 +62,20 @@ class Index:
                                                 variable=ctk.StringVar(value="System"),
                                                 command=self.switch_appearance
         )
-        self.scale_menu = ctk.CTkComboBox(master=self.side_pannel_bottom_frame,
-                                            values=["100%", 
-                                                    "200%", 
-                                                    "80%",
-                                                    "50%"],
-                                            state="readonly",
-                                            variable=ctk.StringVar(value="100%"),
-                                            command=self.update_scaling
+        self._side_pannel_scale_menu = ctk.CTkComboBox(
+                                        master=self._side_pannel_bottom_frame,
+                                        values=["100%", 
+                                                "200%", 
+                                                "80%",
+                                                "50%"],
+                                        state="readonly",
+                                        variable=ctk.StringVar(value="100%"),
+                                        command=self.update_scaling
         )
-        self.copyright_label = ctk.CTkLabel(master=self.side_pannel_bottom_frame,
-                                           text="© 2024, GPGtool",
-                                           font=("Inter", 10)
+        self._side_pannel_copyright_label = ctk.CTkLabel(
+                                                master=self._side_pannel_bottom_frame,
+                                                text="© 2024, GPGtool",
+                                                font=("Inter", 10)
         )
     
     def init_window(self)->None:
@@ -90,11 +91,11 @@ class Index:
         self.set_appereance_mode()
         
         self.main_frame.grid_columnconfigure(2, weight=1)
-        self.main_frame.grid_rowconfigure(2, weight=1)
+        self.main_frame.grid_rowconfigure(1, weight=1)
         self.main_frame.pack(fill="both", expand=True)
     
         self.display_side_pannel()
-        self.active_config.display_configuration()
+        self._active_config.display_configuration()
         
         self._window.mainloop()
     
@@ -102,10 +103,10 @@ class Index:
         """
         Display the configuration of the side menu.
         """
-        self.side_pannel_frame.grid_columnconfigure(0, weight=0)
-        self.side_pannel_frame.grid_rowconfigure(3, weight=0)
+        self._side_pannel_frame.grid_columnconfigure(0, weight=0)
+        self._side_pannel_frame.grid_rowconfigure(3, weight=0)
         
-        self.side_pannel_frame.grid(column=0,
+        self._side_pannel_frame.grid(column=0,
                                     row=0,
                                     columnspan=1,
                                     rowspan=self.main_frame.grid_size()[1],
@@ -113,7 +114,7 @@ class Index:
                                     pady=5,
                                     sticky="nsew"
         )
-        self.side_pannel_title_label.grid(column=0,
+        self._side_pannel_title_label.grid(column=0,
                                           row=0, 
                                           pady=25, 
                                           padx=25,
@@ -123,29 +124,29 @@ class Index:
                                         pady=20         
         )
         
-        self.side_pannel_bottom_frame.grid_columnconfigure(0, weight=1)
-        self.side_pannel_bottom_frame.grid_rowconfigure(2, weight=1)
-        self.side_pannel_bottom_frame.grid(column=0, 
-                                           row=self.side_pannel_frame.grid_size()[1], 
+        self._side_pannel_bottom_frame.grid_columnconfigure(0, weight=1)
+        self._side_pannel_bottom_frame.grid_rowconfigure(2, weight=1)
+        self._side_pannel_bottom_frame.grid(column=0, 
+                                           row=self._side_pannel_frame.grid_size()[1], 
                                            columnspan=1,
-                                           rowspan=self.side_pannel_frame.grid_size()[1],
+                                           rowspan=self._side_pannel_frame.grid_size()[1],
                                            pady=20,
                                            sticky="nsew"
         )
-        self.appearence_menu.grid(column=0, 
-                                   row=0, 
-                                   pady=20
+        self._side_pannel_appearance_menu.grid(column=0, 
+                                                row=0, 
+                                                pady=20
         )
-        self.scale_menu.grid(column=0, 
-                             row=1, 
-                             pady=20
+        self._side_pannel_scale_menu.grid(column=0, 
+                                            row=1, 
+                                            pady=20
         )
-        self.copyright_label.grid(column=0, 
-                                  row=2,  
-                                  pady=20
+        self._side_pannel_copyright_label.grid(column=0, 
+                                                row=2,  
+                                                pady=20
         )
         
-        self.side_pannel_triggers = {
+        self._side_pannel_triggers = {
             
         }
         
@@ -154,8 +155,8 @@ class Index:
         Set the color theme and the appereance mode of the app,
         according to the corresponding attributes.
         """
-        ctk.set_appearance_mode(self.appearence_mode.get())
-        ctk.set_default_color_theme(self.color_theme.get())
+        ctk.set_appearance_mode(self._appearence_mode.get())
+        ctk.set_default_color_theme(self._color_theme.get())
     
     def switch_mode(self, event)->None:
         """
@@ -164,27 +165,29 @@ class Index:
         """
         match self.side_pannel_mode_menu.get():
             case "Select mode":
-                if self.active_config is not Home_view:
-                    self.active_config.dispose_all()
-                    self.active_config = Home_view(master=self.main_frame)
-                    self.active_config.display_configuration()
+                if self._active_config is not Home_view:
+                    self._active_config.dispose_all()
+                    self._active_config.destroy()
+                    self._active_config = Home_view(master=self.main_frame)
+                    self._active_config.display_configuration()
             case "Encryption/Decryption":
-                if self.active_config is not Crypto_tool:
-                    self.active_config.dispose_all()
-                    self.active_config = Crypto_tool(master=self.main_frame)
-                    self.active_config.display_configuration()
+                if self._active_config is not Crypto_tool:
+                    self._active_config.dispose_all()
+                    self._active_config.destroy()
+                    self._active_config = Crypto_tool(master=self.main_frame)
+                    self._active_config.display_configuration()
             case "Key manager":
-                if self.active_config is not Key_manager:
-                    self.active_config.dispose_all()
+                if self._active_config is not Key_manager:
+                    self._active_config.dispose_all()
             case _:
-                self.handle_error(error=1, info=self.mode_menu.get())
+                self.handle_error(error=1, info=self._side_pannel_mode_menu.get())
     
     def switch_appearance(self, event)->None:
         """
         Update the appearance mode of the app, according to the selected 
         value in the appearance menu.
         """
-        self.appearence_mode.set(self.appearence_menu.get().lower())
+        self._appearence_mode.set(self._side_pannel_appearance_menu.get().lower())
         self.set_appereance_mode()
     
     def update_scaling(self, event)->None:
@@ -192,7 +195,7 @@ class Index:
         Update the scaling of the app, according to the selected 
         value in the scale menu.
         """
-        new_scaling_float = int(self.scale_menu.get().replace("%", "")) / 100
+        new_scaling_float = int(self._side_pannel_scale_menu.get().replace("%", "")) / 100
         ctk.set_widget_scaling(new_scaling_float)
 
     def handle_error(self, error:int, info:str="")->None:
