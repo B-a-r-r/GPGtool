@@ -33,7 +33,8 @@ class Index:
         self._appearence_mode = ctk.StringVar(value="dark")
         self._color_theme = ctk.StringVar(value="blue")
         
-        self.main_frame = ctk.CTkFrame(master=self._window)
+        self.main_frame = ctk.CTkFrame(master=self._window
+        )
         
         self._active_config = Home_view(master=self.main_frame)
         
@@ -51,7 +52,7 @@ class Index:
         )
         
         self._side_pannel_bottom_frame = ctk.CTkFrame(master=self._side_pannel_frame,
-                                            bg_color=self.main_frame.cget("bg_color")
+                                            fg_color=self._side_pannel_frame.cget("fg_color")
         )
         self._side_pannel_appearance_menu = ctk.CTkComboBox(
                                                 master=self._side_pannel_bottom_frame,
@@ -65,7 +66,7 @@ class Index:
         self._side_pannel_scale_menu = ctk.CTkComboBox(
                                         master=self._side_pannel_bottom_frame,
                                         values=["100%", 
-                                                "200%", 
+                                                "150%", 
                                                 "80%",
                                                 "50%"],
                                         state="readonly",
@@ -105,13 +106,12 @@ class Index:
         """
         self._side_pannel_frame.grid_columnconfigure(0, weight=0)
         self._side_pannel_frame.grid_rowconfigure(3, weight=0)
-        
         self._side_pannel_frame.grid(column=0,
                                     row=0,
                                     columnspan=1,
                                     rowspan=self.main_frame.grid_size()[1],
-                                    padx=5,
-                                    pady=5,
+                                    padx=0,
+                                    pady=0,
                                     sticky="nsew"
         )
         self._side_pannel_title_label.grid(column=0,
