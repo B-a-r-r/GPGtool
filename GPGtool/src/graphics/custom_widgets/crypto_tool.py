@@ -123,16 +123,16 @@ class Crypto_tool(ctk.CTkFrame):
                                         font=("Inter", 32, "bold"),
         )
         
-        self._path_entry = ctk.CTkComboBox(master=self._io_frame,
+        self._path_entry_in = ctk.CTkComboBox(master=self._io_frame,
                                            variable=ctk.StringVar(value="Enter file path..."),
                                            values=["From computeur..."],
-                                           command=self.path_entry_changed
+                                           command=self.path_entry_modified
         )
         
-        self._path_result = ctk.CTkComboBox(master=self._io_frame,
+        self._path_entry_out = ctk.CTkComboBox(master=self._io_frame,
                                             variable=ctk.StringVar(value="Enter file path..."),
                                             values=["From computeur..."],
-                                            command=self.path_result_changed
+                                            command=self.path_entry_modified
         )
         
         self._warning_entry_label = ctk.CTkLabel(master=self._io_frame, 
@@ -218,7 +218,7 @@ class Crypto_tool(ctk.CTkFrame):
         self._submit_button.grid(column=0,
                                     columnspan=self._main_frame.grid_size()[0],
                                     row=self._main_frame.grid_size()[1],
-                                    pady=(8,16),
+                                    pady=(5,16),
                                     sticky="n"
         )
         
@@ -228,7 +228,7 @@ class Crypto_tool(ctk.CTkFrame):
         
         if (self._selected_entry_format == "File"):
             self._text_entry.grid_forget()
-            self._path_entry.grid(column=0,
+            self._path_entry_in.grid(column=0,
                                     row=0, 
                                     padx=(15, 15),
                                     pady=(10,20),
@@ -242,7 +242,7 @@ class Crypto_tool(ctk.CTkFrame):
                                             sticky="w" if self._selected_result_format == "Text" else "nw"
             )
         else:
-            self._path_entry.grid_forget()
+            self._path_entry_in.grid_forget()
             self._warning_entry_label.grid_forget()
             if (not event == "text_entry_clicked"):
                 self.text_entry_placeholder(mode="encrypt")
@@ -257,7 +257,7 @@ class Crypto_tool(ctk.CTkFrame):
         
         if (self._selected_result_format == "File"):
             self._text_result.grid_forget()
-            self._path_result.grid(column=1,
+            self._path_entry_out.grid(column=1,
                                     row=0, 
                                     padx=(15, 15),
                                     pady=(10,20),
@@ -271,7 +271,7 @@ class Crypto_tool(ctk.CTkFrame):
                                             sticky="w" if self._selected_entry_format == "Text" else "nw"
             )
         else:
-            self._path_result.grid_forget()
+            self._path_entry_out.grid_forget()
             self._warning_result_label.grid_forget()
             self._text_result.grid(column=1,
                                     row=0, 
@@ -287,7 +287,7 @@ class Crypto_tool(ctk.CTkFrame):
         self._key_entry.grid(column=0,
                             columnspan=self._main_frame.grid_size()[0],
                             row=5, 
-                            pady=(10,5),
+                            pady=(15,0),
                             sticky="s",
                             
         )
@@ -295,7 +295,7 @@ class Crypto_tool(ctk.CTkFrame):
         self._passphrase_entry.grid(column=0,
                                     columnspan=self._main_frame.grid_size()[0],
                                     row=6, 
-                                    pady=(5,10),
+                                    pady=(5,0),
                                     sticky="n"
         ) if self._selected_mode == "Decryption" else self._passphrase_entry.grid_forget()
     
@@ -347,11 +347,13 @@ class Crypto_tool(ctk.CTkFrame):
             self._key_entry.configure(text_color="#DCE4EE")
             self._key_entry.set(self._key_entry.get().removeprefix("Enter public key...").strip())
             
-    def path_entry_changed(self, event=None):
-        pass
-    
-    def path_result_changed(self, event=None):
-        pass
+    def path_modified(self, event=None):
+        """
+        If the path entry isn't filled with user's data, displays its placeholder.
+        """
+        if (self._path_entry_in.get() == "Enter file path..."):
+            self._path_entry_in.set("")
+            self._path_entry_in.configure(text_color="#DCE4EE")
             
     def key_entry_clicked(self, event=None):
         """
